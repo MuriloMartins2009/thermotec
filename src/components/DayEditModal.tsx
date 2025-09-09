@@ -5,8 +5,10 @@ import { Printer, Save } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import { ServiceForm, ServiceData } from './ServiceForm';
+import { PrintOptionsModal } from './PrintOptionsModal';
 
 interface DayEditModalProps {
   date: Date;
@@ -15,13 +17,22 @@ interface DayEditModalProps {
 }
 
 interface DayData {
-  morning: string;
-  afternoon: string;
+  morning: {
+    notes: string;
+    services: ServiceData[];
+  };
+  afternoon: {
+    notes: string;
+    services: ServiceData[];
+  };
 }
 
 export const DayEditModal: React.FC<DayEditModalProps> = ({ date, isOpen, onClose }) => {
-  const [morningText, setMorningText] = useState('');
-  const [afternoonText, setAfternoonText] = useState('');
+  const [dayData, setDayData] = useState<DayData>({
+    morning: { notes: '', services: [] },
+    afternoon: { notes: '', services: [] }
+  });
+  const [showPrintModal, setShowPrintModal] = useState(false);
 
   const dateKey = format(date, 'yyyy-MM-dd');
 
@@ -30,195 +41,159 @@ export const DayEditModal: React.FC<DayEditModalProps> = ({ date, isOpen, onClos
     if (isOpen) {
       const savedData = localStorage.getItem(`agenda-${dateKey}`);
       if (savedData) {
-        const data: DayData = JSON.parse(savedData);
-        setMorningText(data.morning || '');
-        setAfternoonText(data.afternoon || '');
+        try {
+          const data = JSON.parse(savedData);
+          // Migrar dados antigos se necessário
+          if (typeof data.morning === 'string') {
+            setDayData({
+              morning: { notes: data.morning || '', services: [] },
+              afternoon: { notes: data.afternoon || '', services: [] }
+            });
+          } else {
+            setDayData(data);
+          }
+        } catch {
+          setDayData({
+            morning: { notes: '', services: [] },
+            afternoon: { notes: '', services: [] }
+          });
+        }
       } else {
-        setMorningText('');
-        setAfternoonText('');
+        setDayData({
+          morning: { notes: '', services: [] },
+          afternoon: { notes: '', services: [] }
+        });
       }
     }
   }, [dateKey, isOpen]);
 
   const handleSave = () => {
-    const data: DayData = {
-      morning: morningText,
-      afternoon: afternoonText,
-    };
-    
-    localStorage.setItem(`agenda-${dateKey}`, JSON.stringify(data));
+    localStorage.setItem(`agenda-${dateKey}`, JSON.stringify(dayData));
     toast({
       title: "Dados salvos com sucesso!",
       description: `Agenda de ${format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} foi salva.`,
     });
   };
 
-  const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
+  const updatePeriodNotes = (period: 'morning' | 'afternoon', notes: string) => {
+    setDayData(prev => ({
+      ...prev,
+      [period]: { ...prev[period], notes }
+    }));
+  };
 
-    const printContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Agenda - ${format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</title>
-          <style>
-            body {
-              font-family: 'Arial', sans-serif;
-              line-height: 1.6;
-              margin: 0;
-              padding: 20px;
-              background: white;
-            }
-            .header {
-              text-align: center;
-              margin-bottom: 30px;
-              border-bottom: 2px solid #e5e7eb;
-              padding-bottom: 20px;
-            }
-            .header h1 {
-              color: #1f2937;
-              margin: 0;
-              font-size: 24px;
-            }
-            .header p {
-              color: #6b7280;
-              margin: 5px 0 0 0;
-              font-size: 16px;
-            }
-            .section {
-              margin-bottom: 30px;
-              page-break-inside: avoid;
-            }
-            .section-title {
-              background: #f3f4f6;
-              padding: 10px 15px;
-              border-left: 4px solid #3b82f6;
-              font-weight: bold;
-              color: #1f2937;
-              margin-bottom: 15px;
-              font-size: 18px;
-            }
-            .morning-title {
-              border-left-color: #f59e0b;
-              background: #fefbf0;
-            }
-            .afternoon-title {
-              border-left-color: #3b82f6;
-              background: #eff6ff;
-            }
-            .content {
-              padding: 15px;
-              border: 1px solid #e5e7eb;
-              border-radius: 6px;
-              min-height: 200px;
-              white-space: pre-wrap;
-              background: white;
-            }
-            @media print {
-              body { margin: 0; }
-              .no-print { display: none; }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>Agenda Diária</h1>
-            <p>${format(date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</p>
-          </div>
-          
-          <div class="section">
-            <div class="section-title morning-title">🌅 Manhã</div>
-            <div class="content">${morningText || 'Nenhuma anotação para o período da manhã.'}</div>
-          </div>
-          
-          <div class="section">
-            <div class="section-title afternoon-title">🌆 Tarde</div>
-            <div class="content">${afternoonText || 'Nenhuma anotação para o período da tarde.'}</div>
-          </div>
-        </body>
-      </html>
-    `;
-
-    printWindow.document.write(printContent);
-    printWindow.document.close();
-    printWindow.focus();
-    
-    setTimeout(() => {
-      printWindow.print();
-      printWindow.close();
-    }, 250);
+  const updatePeriodServices = (period: 'morning' | 'afternoon', services: ServiceData[]) => {
+    setDayData(prev => ({
+      ...prev,
+      [period]: { ...prev[period], services }
+    }));
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader className="pb-4 border-b">
-          <DialogTitle className="text-xl font-semibold text-center">
-            Agenda - {format(date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="flex-1 overflow-auto p-4 space-y-6">
-          {/* Período da Manhã */}
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-morning-border rounded-full"></div>
-              <h3 className="text-lg font-medium text-foreground">🌅 Manhã</h3>
-            </div>
-            <div className="bg-morning-bg border border-morning-border rounded-lg p-4">
-              <Textarea
-                value={morningText}
-                onChange={(e) => setMorningText(e.target.value)}
-                placeholder="Digite suas anotações para o período da manhã..."
-                className="min-h-[200px] resize-none border-0 bg-transparent focus:ring-0 focus:border-0"
-              />
-            </div>
-          </div>
-
-          {/* Período da Tarde */}
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <div className="w-4 h-4 bg-afternoon-border rounded-full"></div>
-              <h3 className="text-lg font-medium text-foreground">🌆 Tarde</h3>
-            </div>
-            <div className="bg-afternoon-bg border border-afternoon-border rounded-lg p-4">
-              <Textarea
-                value={afternoonText}
-                onChange={(e) => setAfternoonText(e.target.value)}
-                placeholder="Digite suas anotações para o período da tarde..."
-                className="min-h-[200px] resize-none border-0 bg-transparent focus:ring-0 focus:border-0"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Botões de Ação */}
-        <div className="flex justify-between items-center pt-4 border-t bg-background">
-          <Button variant="outline" onClick={onClose}>
-            Fechar
-          </Button>
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader className="pb-4 border-b">
+            <DialogTitle className="text-xl font-semibold text-center">
+              Agenda - {format(date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+            </DialogTitle>
+          </DialogHeader>
           
-          <div className="flex space-x-2">
-            <Button
-              variant="outline"
-              onClick={handlePrint}
-              className="flex items-center space-x-2"
-            >
-              <Printer className="h-4 w-4" />
-              <span>Imprimir</span>
+          <Tabs defaultValue="morning" className="flex-1 flex flex-col">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="morning" className="flex items-center space-x-2">
+                <span>🌅</span>
+                <span>Manhã</span>
+              </TabsTrigger>
+              <TabsTrigger value="afternoon" className="flex items-center space-x-2">
+                <span>🌆</span>
+                <span>Tarde</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="morning" className="flex-1 overflow-auto p-4 space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-medium mb-3">Anotações Gerais</h3>
+                  <div className="bg-morning-bg border border-morning-border rounded-lg p-4">
+                    <Textarea
+                      value={dayData.morning.notes}
+                      onChange={(e) => updatePeriodNotes('morning', e.target.value)}
+                      placeholder="Digite suas anotações gerais para o período da manhã..."
+                      className="min-h-[120px] resize-none border-0 bg-transparent focus:ring-0 focus:border-0"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-medium mb-3">Atendimentos</h3>
+                  <ServiceForm
+                    services={dayData.morning.services}
+                    onServicesChange={(services) => updatePeriodServices('morning', services)}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="afternoon" className="flex-1 overflow-auto p-4 space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-medium mb-3">Anotações Gerais</h3>
+                  <div className="bg-afternoon-bg border border-afternoon-border rounded-lg p-4">
+                    <Textarea
+                      value={dayData.afternoon.notes}
+                      onChange={(e) => updatePeriodNotes('afternoon', e.target.value)}
+                      placeholder="Digite suas anotações gerais para o período da tarde..."
+                      className="min-h-[120px] resize-none border-0 bg-transparent focus:ring-0 focus:border-0"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-medium mb-3">Atendimentos</h3>
+                  <ServiceForm
+                    services={dayData.afternoon.services}
+                    onServicesChange={(services) => updatePeriodServices('afternoon', services)}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          {/* Botões de Ação */}
+          <div className="flex justify-between items-center pt-4 border-t bg-background">
+            <Button variant="outline" onClick={onClose}>
+              Fechar
             </Button>
             
-            <Button
-              onClick={handleSave}
-              className="flex items-center space-x-2"
-            >
-              <Save className="h-4 w-4" />
-              <span>Salvar</span>
-            </Button>
+            <div className="flex space-x-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowPrintModal(true)}
+                className="flex items-center space-x-2"
+              >
+                <Printer className="h-4 w-4" />
+                <span>Imprimir</span>
+              </Button>
+              
+              <Button
+                onClick={handleSave}
+                className="flex items-center space-x-2"
+              >
+                <Save className="h-4 w-4" />
+                <span>Salvar</span>
+              </Button>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+
+      <PrintOptionsModal
+        isOpen={showPrintModal}
+        onClose={() => setShowPrintModal(false)}
+        date={date}
+        dayData={dayData}
+      />
+    </>
   );
 };
