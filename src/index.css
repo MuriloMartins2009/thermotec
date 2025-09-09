@@ -2,41 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Sistema de design para calendário profissional. 
+Todas as cores devem ser HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 210 20% 98%;
+    --foreground: 215 25% 27%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 210 40% 98%;
+    --card-foreground: 215 25% 27%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 210 40% 98%;
+    --popover-foreground: 215 25% 27%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 210 100% 56%;
     --primary-foreground: 210 40% 98%;
+    --primary-hover: 210 100% 50%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 16% 93%;
+    --secondary-foreground: 215 25% 27%;
+    --secondary-hover: 210 16% 89%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 16% 93%;
+    --muted-foreground: 215 13% 54%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 200 100% 67%;
+    --accent-foreground: 215 25% 27%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --success: 142 71% 45%;
+    --success-foreground: 210 40% 98%;
 
-    --radius: 0.5rem;
+    --holiday: 0 84% 60%;
+    --holiday-foreground: 210 40% 98%;
+    --holiday-bg: 0 84% 96%;
+
+    --border: 210 16% 89%;
+    --input: 210 16% 89%;
+    --ring: 210 100% 56%;
+
+    --calendar-today: 210 100% 56%;
+    --calendar-today-bg: 210 100% 96%;
+    --calendar-hover: 210 16% 89%;
+    --calendar-selected: 210 100% 56%;
+
+    --morning-bg: 43 100% 96%;
+    --morning-border: 43 74% 85%;
+    --afternoon-bg: 210 100% 96%;
+    --afternoon-border: 210 74% 85%;
+
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -101,5 +120,17 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Estilos para impressão */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  .no-print {
+    display: none !important;
   }
 }

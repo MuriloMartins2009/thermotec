@@ -22,14 +22,25 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          hover: "hsl(var(--primary-hover))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          hover: "hsl(var(--secondary-hover))",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        holiday: {
+          DEFAULT: "hsl(var(--holiday))",
+          foreground: "hsl(var(--holiday-foreground))",
+          bg: "hsl(var(--holiday-bg))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -46,6 +57,20 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        calendar: {
+          today: "hsl(var(--calendar-today))",
+          "today-bg": "hsl(var(--calendar-today-bg))",
+          hover: "hsl(var(--calendar-hover))",
+          selected: "hsl(var(--calendar-selected))",
+        },
+        morning: {
+          bg: "hsl(var(--morning-bg))",
+          border: "hsl(var(--morning-border))",
+        },
+        afternoon: {
+          bg: "hsl(var(--afternoon-bg))",
+          border: "hsl(var(--afternoon-border))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
