@@ -71,7 +71,7 @@ export const DayEditModal: React.FC<DayEditModalProps> = ({ date, isOpen, onClos
     localStorage.setItem(`agenda-${dateKey}`, JSON.stringify(dayData));
     toast({
       title: "Dados salvos com sucesso!",
-      description: `Agenda de ${format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} foi salva.`,
+      description: `Agenda de Atendimento de ${format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} foi salva.`,
     });
   };
 
@@ -95,7 +95,7 @@ export const DayEditModal: React.FC<DayEditModalProps> = ({ date, isOpen, onClos
         <DialogContent className="max-w-6xl h-[90vh] flex flex-col">
           <DialogHeader className="pb-4 border-b shrink-0">
             <DialogTitle className="text-xl font-semibold text-center">
-              Agenda - {format(date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+              Agenda de Atendimento - {format(date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
             </DialogTitle>
           </DialogHeader>
           
