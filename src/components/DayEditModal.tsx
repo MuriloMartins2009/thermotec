@@ -111,51 +111,23 @@ export const DayEditModal: React.FC<DayEditModalProps> = ({ date, isOpen, onClos
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="morning" className="flex-1 overflow-auto p-4 space-y-6">
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Anotações Gerais</h3>
-                  <div className="bg-morning-bg border border-morning-border rounded-lg p-4">
-                    <Textarea
-                      value={dayData.morning.notes}
-                      onChange={(e) => updatePeriodNotes('morning', e.target.value)}
-                      placeholder="Digite suas anotações gerais para o período da manhã..."
-                      className="min-h-[120px] resize-none border-0 bg-transparent focus:ring-0 focus:border-0"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Reparos Agendados</h3>
-                  <ServiceForm
-                    services={dayData.morning.services}
-                    onServicesChange={(services) => updatePeriodServices('morning', services)}
-                  />
-                </div>
+            <TabsContent value="morning" className="flex-1 overflow-auto p-4">
+              <div>
+                <h3 className="text-lg font-medium mb-3">Reparos Agendados - Manhã</h3>
+                <ServiceForm
+                  services={dayData.morning.services}
+                  onServicesChange={(services) => updatePeriodServices('morning', services)}
+                />
               </div>
             </TabsContent>
 
-            <TabsContent value="afternoon" className="flex-1 overflow-auto p-4 space-y-6">
-              <div className="space-y-4">
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Anotações Gerais</h3>
-                  <div className="bg-afternoon-bg border border-afternoon-border rounded-lg p-4">
-                    <Textarea
-                      value={dayData.afternoon.notes}
-                      onChange={(e) => updatePeriodNotes('afternoon', e.target.value)}
-                      placeholder="Digite suas anotações gerais para o período da tarde..."
-                      className="min-h-[120px] resize-none border-0 bg-transparent focus:ring-0 focus:border-0"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Reparos Agendados</h3>
-                  <ServiceForm
-                    services={dayData.afternoon.services}
-                    onServicesChange={(services) => updatePeriodServices('afternoon', services)}
-                  />
-                </div>
+            <TabsContent value="afternoon" className="flex-1 overflow-auto p-4">
+              <div>
+                <h3 className="text-lg font-medium mb-3">Reparos Agendados - Tarde</h3>
+                <ServiceForm
+                  services={dayData.afternoon.services}
+                  onServicesChange={(services) => updatePeriodServices('afternoon', services)}
+                />
               </div>
             </TabsContent>
           </Tabs>
