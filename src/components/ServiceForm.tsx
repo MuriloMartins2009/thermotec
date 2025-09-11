@@ -55,29 +55,31 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({ services, onServicesCh
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-h-full">
       {/* Lista de Atendimentos */}
-      {services.map((service) => (
-        <div key={service.id} className="bg-card border rounded-lg p-4 space-y-2">
-          <div className="flex justify-between items-start">
-            <div className="grid grid-cols-2 gap-2 flex-1 text-sm">
-              <div><strong>Nome:</strong> {service.name}</div>
-              <div><strong>Telefone:</strong> {service.phone}</div>
-              <div><strong>Endereço:</strong> {service.address}</div>
-              <div><strong>Produto:</strong> {service.product}</div>
-              <div className="col-span-2"><strong>Defeito:</strong> {service.defect}</div>
+      <div className="space-y-4">
+        {services.map((service) => (
+          <div key={service.id} className="bg-card border rounded-lg p-4 space-y-2">
+            <div className="flex justify-between items-start">
+              <div className="grid grid-cols-2 gap-2 flex-1 text-sm">
+                <div><strong>Nome:</strong> {service.name}</div>
+                <div><strong>Telefone:</strong> {service.phone}</div>
+                <div><strong>Endereço:</strong> {service.address}</div>
+                <div><strong>Produto:</strong> {service.product}</div>
+                <div className="col-span-2"><strong>Defeito:</strong> {service.defect}</div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => removeService(service.id)}
+                className="ml-2"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => removeService(service.id)}
-              className="ml-2"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
 
       {/* Formulário para Novo Atendimento */}
       {isAdding ? (
