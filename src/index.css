@@ -17,9 +17,9 @@ Todas as cores devem ser HSL.
     --popover: 210 40% 98%;
     --popover-foreground: 215 25% 27%;
 
-    --primary: 210 100% 56%;
-    --primary-foreground: 210 40% 98%;
-    --primary-hover: 210 100% 50%;
+    --primary: 0 84% 48%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 0 84% 42%;
 
     --secondary: 210 16% 93%;
     --secondary-foreground: 215 25% 27%;
@@ -45,10 +45,10 @@ Todas as cores devem ser HSL.
     --input: 210 16% 89%;
     --ring: 210 100% 56%;
 
-    --calendar-today: 210 100% 56%;
-    --calendar-today-bg: 210 100% 96%;
+    --calendar-today: 0 84% 48%;
+    --calendar-today-bg: 0 84% 96%;
     --calendar-hover: 210 16% 89%;
-    --calendar-selected: 210 100% 56%;
+    --calendar-selected: 0 84% 48%;
 
     --morning-bg: 43 100% 96%;
     --morning-border: 43 74% 85%;
