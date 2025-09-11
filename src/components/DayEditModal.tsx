@@ -126,7 +126,7 @@ export const DayEditModal: React.FC<DayEditModalProps> = ({ date, isOpen, onClos
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-medium mb-3">Atendimentos</h3>
+                  <h3 className="text-lg font-medium mb-3">Reparos Agendados</h3>
                   <ServiceForm
                     services={dayData.morning.services}
                     onServicesChange={(services) => updatePeriodServices('morning', services)}
@@ -150,7 +150,7 @@ export const DayEditModal: React.FC<DayEditModalProps> = ({ date, isOpen, onClos
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-medium mb-3">Atendimentos</h3>
+                  <h3 className="text-lg font-medium mb-3">Reparos Agendados</h3>
                   <ServiceForm
                     services={dayData.afternoon.services}
                     onServicesChange={(services) => updatePeriodServices('afternoon', services)}

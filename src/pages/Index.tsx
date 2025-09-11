@@ -20,7 +20,7 @@ const Index = () => {
                   Agenda de Atendimentos
                 </h1>
                 <p className="text-muted-foreground mt-1">
-                  Clique em qualquer dia para adicionar seus atendimentos
+                  Clique em qualquer dia para agendar reparos de eletrodomésticos
                 </p>
               </div>
             </div>
