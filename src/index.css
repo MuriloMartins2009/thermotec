@@ -140,6 +140,28 @@ Todas as cores devem ser HSL.
   }
 }
 
+/* Estilos para o calendário com fundo */
+.calendar-with-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('./assets/thermotec-calendar-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.1;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.calendar-with-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
 /* Estilos para impressão */
 @media print {
   * {

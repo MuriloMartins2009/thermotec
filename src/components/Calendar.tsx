@@ -115,7 +115,7 @@ export const Calendar = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6">
-      <Card className="p-4 sm:p-6">
+      <Card className="p-4 sm:p-6 relative overflow-hidden calendar-with-bg">
         {renderHeader()}
         {renderDaysOfWeek()}
         {renderCells()}
