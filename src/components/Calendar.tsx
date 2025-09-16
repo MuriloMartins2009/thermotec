@@ -121,6 +121,18 @@ export const Calendar = () => {
         {renderCells()}
       </Card>
       
+      {/* Informações de contato */}
+      <Card className="mt-4 p-4 bg-card/80 backdrop-blur-sm">
+        <div className="text-center space-y-2">
+          <div className="flex items-center justify-center space-x-2 text-primary font-semibold">
+            <span>📞 Telefone: (45) 99116-1153</span>
+          </div>
+          <div className="flex items-center justify-center space-x-2 text-foreground">
+            <span>📍 Endereço: Rua São João, 6740</span>
+          </div>
+        </div>
+      </Card>
+      
       {selectedDate && (
         <DayEditModal
           date={selectedDate}
