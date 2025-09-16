@@ -73,8 +73,27 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({ services, onServicesCh
     }
   };
 
+  const formatPhone = (value: string) => {
+    // Remove tudo que não é número
+    const numbers = value.replace(/\D/g, '');
+    
+    // Aplica a máscara (XX) XXXXX-XXXX
+    if (numbers.length <= 2) {
+      return numbers;
+    } else if (numbers.length <= 7) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    } else {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+    }
+  };
+
   const updateNewService = (field: keyof Omit<ServiceData, 'id'>, value: string) => {
-    setNewService(prev => ({ ...prev, [field]: value }));
+    if (field === 'phone') {
+      const formattedPhone = formatPhone(value);
+      setNewService(prev => ({ ...prev, [field]: formattedPhone }));
+    } else {
+      setNewService(prev => ({ ...prev, [field]: value }));
+    }
     
     if (field === 'cep') {
       fetchAddressByCep(value);
@@ -129,7 +148,8 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({ services, onServicesCh
                 id="phone"
                 value={newService.phone}
                 onChange={(e) => updateNewService('phone', e.target.value)}
-                placeholder="Telefone"
+                placeholder="(45) 99999-9999"
+                maxLength={15}
               />
             </div>
             <div className="space-y-1">
