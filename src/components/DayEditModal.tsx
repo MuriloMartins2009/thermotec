@@ -50,11 +50,12 @@ export const DayEditModal: React.FC<DayEditModalProps> = ({ date, isOpen, onClos
               afternoon: { notes: data.afternoon || '', services: [] }
             });
           } else {
-            // Migrar serviços antigos sem campo 'brand'
+            // Migrar serviços antigos sem campos 'brand' e 'cep'
             const migrateServices = (services: any[]) => 
               services.map(service => ({
                 ...service,
-                brand: service.brand || ''
+                brand: service.brand || '',
+                cep: service.cep || ''
               }));
             
             setDayData({

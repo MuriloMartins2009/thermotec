@@ -9,6 +9,7 @@ export interface ServiceData {
   id: string;
   name: string;
   phone: string;
+  cep: string;
   address: string;
   product: string;
   brand: string;
@@ -25,6 +26,7 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({ services, onServicesCh
   const [newService, setNewService] = useState<Omit<ServiceData, 'id'>>({
     name: '',
     phone: '',
+    cep: '',
     address: '',
     product: '',
     brand: '',
@@ -41,6 +43,7 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({ services, onServicesCh
       setNewService({
         name: '',
         phone: '',
+        cep: '',
         address: '',
         product: '',
         brand: '',
@@ -54,8 +57,28 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({ services, onServicesCh
     onServicesChange(services.filter(service => service.id !== id));
   };
 
+  const fetchAddressByCep = async (cep: string) => {
+    const cleanCep = cep.replace(/\D/g, '');
+    if (cleanCep.length === 8) {
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+        const data = await response.json();
+        if (!data.erro) {
+          const fullAddress = `${data.logradouro}, ${data.bairro}, ${data.localidade} - ${data.uf}`;
+          updateNewService('address', fullAddress);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar CEP:', error);
+      }
+    }
+  };
+
   const updateNewService = (field: keyof Omit<ServiceData, 'id'>, value: string) => {
     setNewService(prev => ({ ...prev, [field]: value }));
+    
+    if (field === 'cep') {
+      fetchAddressByCep(value);
+    }
   };
 
   return (
@@ -68,7 +91,8 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({ services, onServicesCh
               <div className="grid grid-cols-2 gap-2 flex-1 text-sm">
                 <div><strong>Nome:</strong> {service.name}</div>
                 <div><strong>Telefone:</strong> {service.phone}</div>
-                <div><strong>Endereço:</strong> {service.address}</div>
+                <div><strong>CEP:</strong> {service.cep}</div>
+                <div className="col-span-2"><strong>Endereço:</strong> {service.address}</div>
                 <div><strong>Produto:</strong> {service.product}</div>
                 <div><strong>Marca:</strong> {service.brand}</div>
                 <div className="col-span-2"><strong>Defeito:</strong> {service.defect}</div>
@@ -108,13 +132,23 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({ services, onServicesCh
                 placeholder="Telefone"
               />
             </div>
+            <div className="space-y-1">
+              <Label htmlFor="cep">CEP</Label>
+              <Input
+                id="cep"
+                value={newService.cep}
+                onChange={(e) => updateNewService('cep', e.target.value)}
+                placeholder="00000-000"
+                maxLength={9}
+              />
+            </div>
             <div className="col-span-2 space-y-1">
               <Label htmlFor="address">Endereço</Label>
               <Input
                 id="address"
                 value={newService.address}
                 onChange={(e) => updateNewService('address', e.target.value)}
-                placeholder="Endereço"
+                placeholder="Endereço (preenchido automaticamente pelo CEP)"
               />
             </div>
             <div className="space-y-1">
