@@ -3,6 +3,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export interface ServiceData {
   id: string;
@@ -10,6 +11,7 @@ export interface ServiceData {
   phone: string;
   address: string;
   product: string;
+  brand: string;
   defect: string;
 }
 
@@ -25,6 +27,7 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({ services, onServicesCh
     phone: '',
     address: '',
     product: '',
+    brand: '',
     defect: ''
   });
 
@@ -40,6 +43,7 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({ services, onServicesCh
         phone: '',
         address: '',
         product: '',
+        brand: '',
         defect: ''
       });
       setIsAdding(false);
@@ -66,6 +70,7 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({ services, onServicesCh
                 <div><strong>Telefone:</strong> {service.phone}</div>
                 <div><strong>Endereço:</strong> {service.address}</div>
                 <div><strong>Produto:</strong> {service.product}</div>
+                <div><strong>Marca:</strong> {service.brand}</div>
                 <div className="col-span-2"><strong>Defeito:</strong> {service.defect}</div>
               </div>
               <Button
@@ -114,14 +119,30 @@ export const ServiceForm: React.FC<ServiceFormProps> = ({ services, onServicesCh
             </div>
             <div className="space-y-1">
               <Label htmlFor="product">Produto</Label>
-              <Input
-                id="product"
-                value={newService.product}
-                onChange={(e) => updateNewService('product', e.target.value)}
-                placeholder="Produto"
-              />
+              <Select onValueChange={(value) => updateNewService('product', value)} value={newService.product}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o produto" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="lavadora">Lavadora</SelectItem>
+                  <SelectItem value="geladeira">Geladeira</SelectItem>
+                  <SelectItem value="freezer">Freezer</SelectItem>
+                  <SelectItem value="secadora">Secadora</SelectItem>
+                  <SelectItem value="lava-e-seca">Lava e Seca</SelectItem>
+                  <SelectItem value="lava-louça">Lava Louça</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1">
+              <Label htmlFor="brand">Marca</Label>
+              <Input
+                id="brand"
+                value={newService.brand}
+                onChange={(e) => updateNewService('brand', e.target.value)}
+                placeholder="Marca do produto"
+              />
+            </div>
+            <div className="col-span-2 space-y-1">
               <Label htmlFor="defect">Defeito</Label>
               <Input
                 id="defect"
