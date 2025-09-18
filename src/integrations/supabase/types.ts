@@ -14,7 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          afternoon_notes: string | null
+          created_at: string
+          date: string
+          id: string
+          morning_notes: string | null
+          updated_at: string
+        }
+        Insert: {
+          afternoon_notes?: string | null
+          created_at?: string
+          date: string
+          id?: string
+          morning_notes?: string | null
+          updated_at?: string
+        }
+        Update: {
+          afternoon_notes?: string | null
+          created_at?: string
+          date?: string
+          id?: string
+          morning_notes?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          address: string | null
+          appointment_id: string
+          brand: string | null
+          cep: string | null
+          created_at: string
+          defect: string | null
+          id: string
+          name: string
+          period: string
+          phone: string | null
+          product: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          appointment_id: string
+          brand?: string | null
+          cep?: string | null
+          created_at?: string
+          defect?: string | null
+          id?: string
+          name: string
+          period: string
+          phone?: string | null
+          product?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          appointment_id?: string
+          brand?: string | null
+          cep?: string | null
+          created_at?: string
+          defect?: string | null
+          id?: string
+          name?: string
+          period?: string
+          phone?: string | null
+          product?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
