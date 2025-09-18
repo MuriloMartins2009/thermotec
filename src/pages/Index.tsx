@@ -2,8 +2,25 @@ import { Calendar } from '@/components/Calendar';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import thermotecLogo from '@/assets/thermotec-logo.png';
+import { useEffect } from 'react';
+import { migrateFromLocalStorage } from '@/lib/migrateFromLocalStorage';
 
 const Index = () => {
+  useEffect(() => {
+    // Verificar se há dados no localStorage para migrar
+    const hasOldData = Object.keys(localStorage).some(key => key.startsWith('agenda-'));
+    
+    if (hasOldData) {
+      const shouldMigrate = confirm(
+        'Foram encontrados dados salvos localmente. Deseja migrar esses dados para o servidor? Isso garantirá que seus agendamentos fiquem sincronizados entre os computadores.'
+      );
+      
+      if (shouldMigrate) {
+        migrateFromLocalStorage();
+      }
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-card border-b border-border shadow-sm">

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Printer, Save } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/hooks/use-toast';
 import { ServiceForm, ServiceData } from './ServiceForm';
 import { PrintOptionsModal } from './PrintOptionsModal';
+import { useAppointments } from '@/hooks/useAppointments';
 
 interface DayEditModalProps {
   date: Date;
@@ -16,80 +16,25 @@ interface DayEditModalProps {
   onClose: () => void;
 }
 
-interface DayData {
-  morning: {
-    notes: string;
-    services: ServiceData[];
-  };
-  afternoon: {
-    notes: string;
-    services: ServiceData[];
-  };
-}
-
 export const DayEditModal: React.FC<DayEditModalProps> = ({ date, isOpen, onClose }) => {
-  const [dayData, setDayData] = useState<DayData>({
-    morning: { notes: '', services: [] },
-    afternoon: { notes: '', services: [] }
-  });
   const [showPrintModal, setShowPrintModal] = useState(false);
+  const { dayData, setDayData, saveData, loading } = useAppointments(date);
 
-  const dateKey = format(date, 'yyyy-MM-dd');
-
-  // Carregar dados salvos
-  useEffect(() => {
-    if (isOpen) {
-      const savedData = localStorage.getItem(`agenda-${dateKey}`);
-      if (savedData) {
-        try {
-          const data = JSON.parse(savedData);
-          // Migrar dados antigos se necessário
-          if (typeof data.morning === 'string') {
-            setDayData({
-              morning: { notes: data.morning || '', services: [] },
-              afternoon: { notes: data.afternoon || '', services: [] }
-            });
-          } else {
-            // Migrar serviços antigos sem campos 'brand' e 'cep'
-            const migrateServices = (services: any[]) => 
-              services.map(service => ({
-                ...service,
-                brand: service.brand || '',
-                cep: service.cep || ''
-              }));
-            
-            setDayData({
-              morning: {
-                ...data.morning,
-                services: migrateServices(data.morning?.services || [])
-              },
-              afternoon: {
-                ...data.afternoon,
-                services: migrateServices(data.afternoon?.services || [])
-              }
-            });
-          }
-        } catch {
-          setDayData({
-            morning: { notes: '', services: [] },
-            afternoon: { notes: '', services: [] }
-          });
-        }
-      } else {
-        setDayData({
-          morning: { notes: '', services: [] },
-          afternoon: { notes: '', services: [] }
-        });
-      }
+  const handleSave = async () => {
+    const success = await saveData(dayData);
+    
+    if (success) {
+      toast({
+        title: "Dados salvos com sucesso!",
+        description: `Agenda de Atendimento de ${format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} foi salva.`,
+      });
+    } else {
+      toast({
+        title: "Erro ao salvar",
+        description: "Houve um problema ao salvar os dados. Tente novamente.",
+        variant: "destructive"
+      });
     }
-  }, [dateKey, isOpen]);
-
-  const handleSave = () => {
-    localStorage.setItem(`agenda-${dateKey}`, JSON.stringify(dayData));
-    toast({
-      title: "Dados salvos com sucesso!",
-      description: `Agenda de Atendimento de ${format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} foi salva.`,
-    });
   };
 
   const updatePeriodNotes = (period: 'morning' | 'afternoon', notes: string) => {
@@ -167,10 +112,11 @@ export const DayEditModal: React.FC<DayEditModalProps> = ({ date, isOpen, onClos
               
               <Button
                 onClick={handleSave}
+                disabled={loading}
                 className="flex items-center space-x-2"
               >
                 <Save className="h-4 w-4" />
-                <span>Salvar</span>
+                <span>{loading ? 'Salvando...' : 'Salvar'}</span>
               </Button>
             </div>
           </div>
